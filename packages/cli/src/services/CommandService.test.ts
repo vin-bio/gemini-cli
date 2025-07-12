@@ -26,6 +26,7 @@ import { mcpCommand } from '../ui/commands/mcpCommand.js';
 import { editorCommand } from '../ui/commands/editorCommand.js';
 import { bugCommand } from '../ui/commands/bugCommand.js';
 import { quitCommand } from '../ui/commands/quitCommand.js';
+import { vimCommand } from '../ui/commands/vimCommand.js';
 
 // Mock the command modules to isolate the service from the command implementations.
 vi.mock('../ui/commands/memoryCommand.js', () => ({
@@ -79,9 +80,12 @@ vi.mock('../ui/commands/bugCommand.js', () => ({
 vi.mock('../ui/commands/quitCommand.js', () => ({
   quitCommand: { name: 'quit', description: 'Mock Quit' },
 }));
+vi.mock('../ui/commands/vimCommand.js', () => ({
+  vimCommand: { name: 'vim', description: 'Mock Vim' },
+}));
 
 describe('CommandService', () => {
-  const subCommandLen = 17;
+  const subCommandLen = 18;
   let mockConfig: Mocked<Config>;
 
   beforeEach(() => {
@@ -114,7 +118,11 @@ describe('CommandService', () => {
         const tree = commandService.getCommands();
 
         // Post-condition assertions
+<<<<<<< HEAD
         expect(tree.length).toBe(subCommandLen);
+=======
+        expect(tree.length).toBe(5);
+>>>>>>> a433967b ( repeat for all applicable commands)
 
         const commandNames = tree.map((cmd) => cmd.name);
         expect(commandNames).toContain('auth');
@@ -125,6 +133,7 @@ describe('CommandService', () => {
         expect(commandNames).toContain('docs');
         expect(commandNames).toContain('chat');
         expect(commandNames).toContain('theme');
+<<<<<<< HEAD
         expect(commandNames).toContain('stats');
         expect(commandNames).toContain('privacy');
         expect(commandNames).toContain('about');
@@ -149,19 +158,30 @@ describe('CommandService', () => {
         expect(commandNames).toContain('ide');
         expect(commandNames).toContain('editor');
         expect(commandNames).toContain('quit');
+=======
+        expect(commandNames).toContain('vim');
+>>>>>>> a433967b ( repeat for all applicable commands)
       });
 
       it('should overwrite any existing commands when called again', async () => {
         // Load once
         await commandService.loadCommands();
+<<<<<<< HEAD
         expect(commandService.getCommands().length).toBe(subCommandLen);
+=======
+        expect(commandService.getCommands().length).toBe(5);
+>>>>>>> a433967b ( repeat for all applicable commands)
 
         // Load again
         await commandService.loadCommands();
         const tree = commandService.getCommands();
 
         // Should not append, but overwrite
+<<<<<<< HEAD
         expect(tree.length).toBe(subCommandLen);
+=======
+        expect(tree.length).toBe(5);
+>>>>>>> a433967b ( repeat for all applicable commands)
       });
     });
 
@@ -173,7 +193,11 @@ describe('CommandService', () => {
         await commandService.loadCommands();
 
         const loadedTree = commandService.getCommands();
+<<<<<<< HEAD
         expect(loadedTree.length).toBe(subCommandLen);
+=======
+        expect(loadedTree.length).toBe(5);
+>>>>>>> a433967b ( repeat for all applicable commands)
         expect(loadedTree).toEqual([
           aboutCommand,
           authCommand,
@@ -191,7 +215,11 @@ describe('CommandService', () => {
           quitCommand,
           statsCommand,
           themeCommand,
+<<<<<<< HEAD
           toolsCommand,
+=======
+          vimCommand,
+>>>>>>> a433967b ( repeat for all applicable commands)
         ]);
       });
     });
