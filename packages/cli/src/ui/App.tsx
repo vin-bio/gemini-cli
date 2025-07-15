@@ -168,8 +168,18 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
 
   useEffect(() => {
     checkForUpdates().then((info) => {
-      if (process.env.GEMINI_CLI_NO_AUTO_UPDATE === 'true') {
+      if (process.env.GEMINI_CLI_DISABLE_AUTOUPDATER === 'true') {
         setUpdateInfo(info);
+        setTimeout(() => {
+          addItem(
+            {
+                type: MessageType.INFO,
+                text: `${info?.message}\nRun npm install -g ${info?.update.name} to update`,
+            },
+            Date.now(),
+          );
+          setUpdateInfo(null);
+          }, 60000);
         return;
       }
 
