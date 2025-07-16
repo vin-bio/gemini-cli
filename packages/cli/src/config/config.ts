@@ -20,7 +20,7 @@ import {
   MCPServerConfig,
   IDE_SERVER_NAME,
 } from '@google/gemini-cli-core';
-import { Settings } from './settings.js';
+import { Settings, setSystemSettingsPath } from './settings.js';
 
 import { Extension, filterActiveExtensions } from './extension.js';
 import { getCliVersion } from '../utils/version.js';
@@ -57,6 +57,7 @@ export interface CliArgs {
   extensions: string[] | undefined;
   listExtensions: boolean | undefined;
   ideMode: boolean | undefined;
+  systemSettingsPath: string | undefined;
 }
 
 export async function parseArguments(): Promise<CliArgs> {
@@ -182,6 +183,10 @@ export async function parseArguments(): Promise<CliArgs> {
       type: 'boolean',
       description: 'Run in IDE mode?',
     })
+    .option('system-settings-path', {
+      type: 'string',
+      description: 'Path to system settings file.',
+    })
 
     .version(await getCliVersion()) // This will enable the --version flag based on package.json
     .alias('v', 'version')
@@ -236,6 +241,10 @@ export async function loadCliConfig(
     [process.env.DEBUG, process.env.DEBUG_MODE].some(
       (v) => v === 'true' || v === '1',
     );
+
+  if (argv.systemSettingsPath) {
+    setSystemSettingsPath(argv.systemSettingsPath);
+  }
 
   const ideMode =
     (argv.ideMode ?? settings.ideMode ?? false) &&
