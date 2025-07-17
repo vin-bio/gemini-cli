@@ -58,7 +58,17 @@ export async function startIDEServer(context: vscode.ExtensionContext) {
       });
 
       const keepAlive = setInterval(() => {
-        transport.send({ jsonrpc: '2.0', method: 'ping' });
+        try {
+          transport.send({ jsonrpc: '2.0', method: 'ping' });
+        } catch (e) {
+          // If sending a ping fails, the connection is likely broken.
+          // Log the error and clear the interval to prevent further attempts.
+          console.error(
+            'Failed to send keep-alive ping, cleaning up interval.',
+            e,
+          );
+          clearInterval(keepAlive);
+        }
       }, 30000); // Send ping every 30 seconds
 
       transport.onclose = () => {
