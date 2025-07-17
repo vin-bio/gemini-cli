@@ -21,6 +21,7 @@ import process from 'node:process';
 import { useGeminiStream } from './hooks/useGeminiStream.js';
 import { StreamingState } from './types.js';
 import { Tips } from './components/Tips.js';
+import { BackgroundAgentManager } from '@google/gemini-cli-core/src/background/manager.js';
 
 // Define a more complete mock server config based on actual Config
 interface MockServerConfig {
@@ -50,6 +51,7 @@ interface MockServerConfig {
   getSandbox: Mock<() => SandboxConfig | undefined>;
   getTargetDir: Mock<() => string>;
   getToolRegistry: Mock<() => ToolRegistry>; // Use imported ToolRegistry type
+  getBackgroundAgentManager: Mock<() => BackgroundAgentManager>;
   getDebugMode: Mock<() => boolean>;
   getQuestion: Mock<() => string | undefined>;
   getFullContext: Mock<() => boolean>;
@@ -110,6 +112,7 @@ vi.mock('@google/gemini-cli-core', async (importOriginal) => {
         getSandbox: vi.fn(() => opts.sandbox),
         getTargetDir: vi.fn(() => opts.targetDir || '/test/dir'),
         getToolRegistry: vi.fn(() => ({}) as ToolRegistry), // Simple mock
+        getBackgroundAgentManager: vi.fn(() => new BackgroundAgentManager([])),
         getDebugMode: vi.fn(() => opts.debugMode || false),
         getQuestion: vi.fn(() => opts.question),
         getFullContext: vi.fn(() => opts.fullContext ?? false),
