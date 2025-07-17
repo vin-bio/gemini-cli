@@ -161,9 +161,7 @@ const logsSubcommand: SlashCommand = {
       };
     }
     const task = await getActiveAgent(context).getTask(args);
-    const content = `Task logs for ${task.id}. status: (${task.status.state})\n${partListUnionToString(
-      task.status.message?.parts ?? [],
-    )}`;
+    const content = `Task logs for ${task.id}. status: (${task.status.state})\n${getTaskStatusString(task)}`;
 
     return {
       type: 'message',

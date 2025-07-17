@@ -7,7 +7,11 @@
 import { MCPServerConfig } from '../config/config.js';
 import { connectToMcpServer, discoverTools } from '../tools/mcp-client.js';
 import { DiscoveredMCPTool } from '../tools/mcp-tool.js';
-import { BackgroundAgentTask } from './types.js';
+import {
+  BackgroundAgentTasksResponseSchema,
+  BackgroundAgentTaskResponseSchema,
+  BackgroundAgentTask,
+} from './types.js';
 
 export async function loadBackgroundAgent(
   name: string,
@@ -54,33 +58,32 @@ export class BackgroundAgent {
   }
 
   async startTask(prompt: string): Promise<BackgroundAgentTask> {
-    const { structuredContent: out } = await this.callTool(this.startTaskTool, {
+    const resp = await this.callTool(this.startTaskTool, {
       prompt: {
         role: 'user',
         parts: [{ text: prompt }],
       },
     });
-
-    return out as BackgroundAgentTask;
+    const taskResp = await BackgroundAgentTaskResponseSchema.parseAsync(resp);
+    return taskResp.structuredContent;
   }
 
   async getTask(
     id: string,
     historyLength?: number,
   ): Promise<BackgroundAgentTask> {
-    const { structuredContent: out } = await this.callTool(this.getTaskTool, {
+    const resp = await this.callTool(this.getTaskTool, {
       id,
       historyLength,
     });
-    return out as BackgroundAgentTask;
+    const taskResp = await BackgroundAgentTaskResponseSchema.parseAsync(resp);
+    return taskResp.structuredContent;
   }
 
   async listTasks(): Promise<BackgroundAgentTask[]> {
-    const { structuredContent: out } = await this.callTool(
-      this.listTasksTool,
-      {},
-    );
-    return (out as { tasks: BackgroundAgentTask[] }).tasks;
+    const resp = await this.callTool(this.listTasksTool, {});
+    const tasksResp = await BackgroundAgentTasksResponseSchema.parseAsync(resp);
+    return tasksResp.structuredContent;
   }
 
   async messageTask(id: string, message: string) {
@@ -113,9 +116,9 @@ export class BackgroundAgent {
       throw new Error('Expected exactly one part with a functionResponse');
     }
     const resp = parts[0].functionResponse.response;
-    if ('error' in resp) {
-      throw new Error(`Error calling ${tool.displayName}: ${resp.error}`);
+    if ('isError' in resp && resp.isError) {
+      throw new Error(`Error calling ${tool.displayName}: ${resp}`);
     }
-    return parts[0].functionResponse.response;
+    return resp;
   }
 }
