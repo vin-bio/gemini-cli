@@ -173,19 +173,19 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
         setTimeout(() => {
           addItem(
             {
-                type: MessageType.INFO,
-                text: `${info?.message}\nRun npm install -g ${info?.update.name} to update`,
+              type: MessageType.INFO,
+              text: `${info?.message}\nRun npm install -g ${info?.update.name} to update`,
             },
             Date.now(),
           );
           setUpdateInfo(null);
-          }, 60000);
+        }, 60000);
         return;
       }
 
       handleAutoUpdate(info, setUpdateInfo, setIsUpdating, addItem);
     });
-  }, []);
+  });
 
   const { history, addItem, clearItems, loadHistory } = useHistory();
   const {
