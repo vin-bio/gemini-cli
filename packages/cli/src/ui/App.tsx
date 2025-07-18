@@ -239,6 +239,8 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
         process.cwd(),
         config.getDebugMode(),
         config.getFileService(),
+        config.getMemoryDiscoveryMode(),
+        config.getMemoryDiscoveryBfsLimit(),
         config.getExtensionContextFilePaths(),
       );
       config.setUserMemory(memoryContent);

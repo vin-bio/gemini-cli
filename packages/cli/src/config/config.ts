@@ -19,6 +19,7 @@ import {
   TelemetryTarget,
   MCPServerConfig,
   IDE_SERVER_NAME,
+  MemoryScanMode,
 } from '@google/gemini-cli-core';
 import { Settings } from './settings.js';
 
@@ -48,6 +49,8 @@ export interface CliArgs {
   showMemoryUsage: boolean | undefined;
   show_memory_usage: boolean | undefined;
   yolo: boolean | undefined;
+  memoryDiscoveryMode: MemoryScanMode;
+  memoryDiscoveryBfsLimit: number;
   telemetry: boolean | undefined;
   checkpointing: boolean | undefined;
   telemetryTarget: string | undefined;
@@ -136,6 +139,35 @@ export async function parseArguments(): Promise<CliArgs> {
         'Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?',
       default: false,
     })
+    .option('memory-discovery-mode', {
+      type: 'string',
+      choices: ['md-tree', 'fs-bfs'],
+      description: 'The mode for discovering for GEMINI.md files.',
+      default: process.env.GEMINI_MEMORY_DISCOVERY_MODE || 'fs-bfs',
+      coerce: (arg) => {
+        if (arg !== 'md-tree' && arg !== 'fs-bfs') {
+          throw new Error(
+            'Invalid memory-discovery-mode. Must be "md-tree" or "fs-bfs".',
+          );
+        }
+        return arg;
+      },
+    })
+    .option('memory-discovery-bfs-limit', {
+      type: 'number',
+      description:
+        'The maximum number of directories to scan for GEMINI.md files in "fs-bfs" mode.',
+      default: process.env.GEMINI_MEMORY_DISCOVERY_BFS_LIMIT
+        ? parseInt(process.env.GEMINI_MEMORY_DISCOVERY_BFS_LIMIT, 10)
+        : 200,
+      coerce: (arg) => {
+        const num = Number(arg);
+        if (isNaN(num)) {
+          throw new Error('memory-discovery-bfs-limit must be a number.');
+        }
+        return num;
+      },
+    })
     .option('telemetry', {
       type: 'boolean',
       description:
@@ -218,6 +250,8 @@ export async function loadHierarchicalGeminiMemory(
   currentWorkingDirectory: string,
   debugMode: boolean,
   fileService: FileDiscoveryService,
+  memoryDiscoveryMode: MemoryScanMode,
+  memoryDiscoveryBfsLimit: number,
   extensionContextFilePaths: string[] = [],
 ): Promise<{ memoryContent: string; fileCount: number }> {
   if (debugMode) {
@@ -231,6 +265,8 @@ export async function loadHierarchicalGeminiMemory(
     currentWorkingDirectory,
     debugMode,
     fileService,
+    memoryDiscoveryMode,
+    memoryDiscoveryBfsLimit,
     extensionContextFilePaths,
   );
 }
@@ -278,6 +314,8 @@ export async function loadCliConfig(
     process.cwd(),
     debugMode,
     fileService,
+    argv.memoryDiscoveryMode,
+    argv.memoryDiscoveryBfsLimit,
     extensionContextFilePaths,
   );
 
@@ -364,6 +402,8 @@ export async function loadCliConfig(
     mcpServers,
     userMemory: memoryContent,
     geminiMdFileCount: fileCount,
+    memoryDiscoveryMode: argv.memoryDiscoveryMode,
+    memoryDiscoveryBfsLimit: argv.memoryDiscoveryBfsLimit,
     approvalMode: argv.yolo || false ? ApprovalMode.YOLO : ApprovalMode.DEFAULT,
     showMemoryUsage:
       argv.showMemoryUsage ||
