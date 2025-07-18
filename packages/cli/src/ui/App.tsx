@@ -111,9 +111,13 @@ function handleAutoUpdate(
 
   const updateProcess = spawn(
     'npm',
-    ['i', '-g', `@google/gemini-cli@${info.update.latest}`],
-    { stdio: 'pipe' }, // Change to pipe
+    ['install', '-g', `@google/gemini-cli@${info.update.latest}`],
+    { stdio: 'pipe' },
   );
+  let errorOutput = '';
+  updateProcess.stderr.on('data', (data) => {
+    errorOutput += data.toString();
+  });
 
   updateProcess.on('close', (code) => {
     if (code === 0) {
@@ -134,6 +138,9 @@ function handleAutoUpdate(
         },
         Date.now(),
       );
+      console.error(
+        `Update process exited with code ${code}. Stderr: ${errorOutput}`,
+      );
     }
     setIsUpdating(false);
     setUpdateInfo(null);
@@ -148,6 +155,7 @@ function handleAutoUpdate(
       },
       Date.now(),
     );
+    console.error('install error:', err);
     setIsUpdating(false);
     setUpdateInfo(null);
   });
@@ -174,7 +182,7 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
           addItem(
             {
               type: MessageType.INFO,
-              text: `${info?.message}\nRun npm install -g ${info?.update.name} to update`,
+              text: `${info?.message}\nRun npm install -g ${info?.update.name} to install`,
             },
             Date.now(),
           );
@@ -185,7 +193,7 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
 
       handleAutoUpdate(info, setUpdateInfo, setIsUpdating, addItem);
     });
-  });
+  }, []);
 
   const { history, addItem, clearItems, loadHistory } = useHistory();
   const {
