@@ -19,7 +19,7 @@ import {
   TelemetryTarget,
   MCPServerConfig,
   IDE_SERVER_NAME,
-  MemoryScanMode,
+  MemoryDiscoveryMode,
 } from '@google/gemini-cli-core';
 import { Settings } from './settings.js';
 
@@ -49,7 +49,7 @@ export interface CliArgs {
   showMemoryUsage: boolean | undefined;
   show_memory_usage: boolean | undefined;
   yolo: boolean | undefined;
-  memoryDiscoveryMode: MemoryScanMode;
+  memoryDiscoveryMode: MemoryDiscoveryMode;
   memoryDiscoveryBfsLimit: number;
   telemetry: boolean | undefined;
   checkpointing: boolean | undefined;
@@ -250,7 +250,7 @@ export async function loadHierarchicalGeminiMemory(
   currentWorkingDirectory: string,
   debugMode: boolean,
   fileService: FileDiscoveryService,
-  memoryDiscoveryMode: MemoryScanMode,
+  memoryDiscoveryMode: MemoryDiscoveryMode,
   memoryDiscoveryBfsLimit: number,
   extensionContextFilePaths: string[] = [],
 ): Promise<{ memoryContent: string; fileCount: number }> {

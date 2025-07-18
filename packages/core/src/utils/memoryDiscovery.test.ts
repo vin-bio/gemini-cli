@@ -72,6 +72,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
     expect(memoryContent).toBe('');
     expect(fileCount).toBe(0);
@@ -99,6 +101,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
 
     expect(memoryContent).toBe(
@@ -130,6 +134,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
 
     expect(memoryContent).toBe(
@@ -173,6 +179,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
     const expectedContent =
       `--- Context from: ${path.relative(CWD, projectRootCustomFile)} ---\nProject root custom memory\n--- End of Context from: ${path.relative(CWD, projectRootCustomFile)} ---\n\n` +
@@ -238,6 +246,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
     const expectedContent =
       `--- Context from: ${customFilename} ---\nCWD custom memory\n--- End of Context from: ${customFilename} ---\n\n` +
@@ -285,6 +295,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
     const expectedContent =
       `--- Context from: ${path.relative(CWD, projectRootGeminiFile)} ---\nProject root memory\n--- End of Context from: ${path.relative(CWD, projectRootGeminiFile)} ---\n\n` +
@@ -354,6 +366,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
     const expectedContent =
       `--- Context from: ${ORIGINAL_GEMINI_MD_FILENAME_CONST_FOR_TEST} ---\nCWD memory\n--- End of Context from: ${ORIGINAL_GEMINI_MD_FILENAME_CONST_FOR_TEST} ---\n\n` +
@@ -448,6 +462,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
 
     const relPathGlobal = path.relative(CWD, GLOBAL_GEMINI_FILE);
@@ -531,6 +547,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
     );
 
     const expectedContent = `--- Context from: ${path.join('my_code', ORIGINAL_GEMINI_MD_FILENAME_CONST_FOR_TEST)} ---\nMy code memory\n--- End of Context from: ${path.join('my_code', ORIGINAL_GEMINI_MD_FILENAME_CONST_FOR_TEST)} ---`;
@@ -567,7 +585,7 @@ describe('loadServerHierarchicalMemory', () => {
     }) as unknown as typeof fsPromises.readdir);
     mockFs.access.mockRejectedValue(new Error('not found'));
 
-    await loadServerHierarchicalMemory(CWD, true, fileService);
+    await loadServerHierarchicalMemory(CWD, true, fileService, 'fs-bfs', 200);
 
     expect(consoleDebugSpy).toHaveBeenCalledWith(
       expect.stringContaining('[DEBUG] [BfsFileSearch]'),
@@ -595,6 +613,8 @@ describe('loadServerHierarchicalMemory', () => {
       CWD,
       false,
       fileService,
+      'fs-bfs',
+      200,
       [extensionFilePath],
     );
 
