@@ -1,6 +1,7 @@
 # API keys and secrets
 .env
 .env~
+.bashrc
 
 # gemini-cli settings
 .gemini/
