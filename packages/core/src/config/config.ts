@@ -28,6 +28,8 @@ import {
 } from '../tools/memoryTool.js';
 import { WebSearchTool } from '../tools/web-search.js';
 import { ImageAnalysisTool } from '../tools/image-analysis.js';
+import { DegAnalysisTool } from '../tools/deg-analysis.js';
+import { GoAnalysisTool } from '../tools/go-analysis.js';
 import { GeminiClient } from '../core/client.js';
 import { FileDiscoveryService } from '../services/fileDiscoveryService.js';
 import { GitService } from '../services/gitService.js';
@@ -624,6 +626,8 @@ export class Config {
     registerCoreTool(MemoryTool);
     registerCoreTool(WebSearchTool, this);
     registerCoreTool(ImageAnalysisTool, this);
+    registerCoreTool(DegAnalysisTool, this);
+    registerCoreTool(GoAnalysisTool, this);
 
     await registry.discoverTools();
     return registry;
